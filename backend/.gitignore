@@ -1,0 +1,9 @@
+node_modules/
+npm-debug.log*
+.idea/*
+.DS_Store
+config/config.init.env
+# real secrets live here; copy config.env.example
+config/config.env
+.vercel
+postman/
