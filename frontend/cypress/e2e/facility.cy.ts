@@ -23,6 +23,7 @@ describe("Facilities", () => {
   it("admin adds → edits → deletes a facility", () => {
     login(admin);
     cy.contains("a", "Add Facility").click();
+    cy.contains("h1", "Add facility");
 
     // validation first
     cy.contains("button", "Save").click();
@@ -38,14 +39,15 @@ describe("Facilities", () => {
     cy.location("pathname").should("match", /^\/facility\/[a-f0-9]{24}$/);
     cy.contains("h1", facilityName);
 
-    cy.contains("a", "Edit").click();
-    cy.get("input[name=hourlyRate]").clear().type("200");
-    cy.contains("button", "Save").click();
+    cy.contains("a:visible", "Edit").click();
+    // Next keeps left pages in the DOM (hidden), so target only :visible elements
+    cy.get("input[name=hourlyRate]:visible").clear().type("200");
+    cy.contains("button:visible", "Save").click();
     cy.contains("200 THB");
 
-    cy.contains("button", "Delete").click(); // Cypress auto-accepts confirm()
+    cy.contains("button:visible", "Delete").click(); // Cypress auto-accepts confirm()
     cy.location("pathname").should("eq", "/facility");
-    cy.contains(facilityName).should("not.exist");
+    cy.contains("[data-testid=facility-card]:visible", facilityName).should("not.exist");
   });
 
   it("guest and member can view but not manage", () => {

@@ -26,3 +26,6 @@ npm run cy:open              # Cypress UI (needs `npm run dev` + backend running
 npm run cy:run               # Cypress headless
 CYPRESS_BASE_URL=https://<app>.vercel.app npm run cy:run   # against deployed site
 ```
+
+Cypress gotcha: Next 16 keeps pages you navigated away from in the DOM (hidden with `display: none`).
+After navigating, select with `:visible`, e.g. `cy.get("input[name=x]:visible")`, `cy.contains("button:visible", "Save")`.
