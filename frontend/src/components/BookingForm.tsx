@@ -2,15 +2,30 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { saveBooking } from "@/app/booking/actions";
+import { editBooking } from "@/app/mybooking/actions";
 import { MAX_HOURS, MIN_HOURS, todayString } from "@/libs/parseBookingForm";
+import { bookingDay } from "@/libs/bookingTime";
+import type { Booking } from "@/types/booking";
 import type { Facility } from "@/types/facility";
 
-type Props = { facilities: Facility[]; defaultFacilityId?: string };
+// booking undefined → create (member only), otherwise edit that booking (owner or admin).
+type Props = { facilities: Facility[]; defaultFacilityId?: string; booking?: Booking };
 
-export default function BookingForm({ facilities, defaultFacilityId }: Props) {
-  const [state, action, pending] = useActionState(saveBooking, {});
+export default function BookingForm({ facilities, defaultFacilityId, booking }: Props) {
+  const isEdit = !!booking;
+  const [state, action, pending] = useActionState(isEdit ? editBooking.bind(null, booking._id) : saveBooking, {});
   const v = state.values;
   const err = state.errors ?? {};
+
+  // Values shown when the form first opens: what the action echoed back, else the booking being edited.
+  const initial = {
+    facility: v?.facility ?? booking?.facility?._id ?? defaultFacilityId ?? "",
+    bookingDate: v?.bookingDate ?? (booking ? bookingDay(booking.bookingDate) : undefined),
+    startTime: v?.startTime ?? booking?.startTime,
+    durationHours: v?.durationHours ?? String(booking?.durationHours ?? 1),
+  };
+  // The facility list only has active facilities; a booking may point at one that was closed since.
+  const facilityGone = isEdit && !facilities.some((f) => f._id === booking.facility?._id);
 
   return (
     // key: remount after each submit so defaultValues reflect what the action echoed back
@@ -20,12 +35,13 @@ export default function BookingForm({ facilities, defaultFacilityId }: Props) {
       noValidate
       className="max-w-md mx-auto mt-10 flex flex-col gap-4 bg-white p-8 rounded shadow"
     >
-      <h1 className="text-2xl font-semibold">Book a facility</h1>
+      <h1 className="text-2xl font-semibold">{isEdit ? "Edit booking" : "Book a facility"}</h1>
+      {isEdit && booking.user && <p className="text-sm text-zinc-600">Booked by {booking.user.name}</p>}
 
       <label className="flex flex-col gap-1">Facility
         <select
           name="facility"
-          defaultValue={v?.facility ?? defaultFacilityId ?? ""}
+          defaultValue={facilityGone && !v ? "" : initial.facility}
           aria-invalid={!!err.facility}
           className="border rounded px-3 py-2"
         >
@@ -34,6 +50,11 @@ export default function BookingForm({ facilities, defaultFacilityId }: Props) {
             <option key={f._id} value={f._id}>{f.name} ({f.sportType}, {f.hourlyRate} THB/hour)</option>
           ))}
         </select>
+        {facilityGone && !err.facility && (
+          <span className="text-sm text-amber-700">
+            {booking.facility?.name ?? "The original facility"} is no longer available. Please choose another one.
+          </span>
+        )}
         {err.facility && <span className="text-sm text-red-600">{err.facility}</span>}
       </label>
 
@@ -43,7 +64,7 @@ export default function BookingForm({ facilities, defaultFacilityId }: Props) {
           type="date"
           min={todayString()}
           suppressHydrationWarning // server and browser may be in different time zones
-          defaultValue={v?.bookingDate}
+          defaultValue={initial.bookingDate}
           aria-invalid={!!err.bookingDate}
           className="border rounded px-3 py-2"
         />
@@ -54,7 +75,7 @@ export default function BookingForm({ facilities, defaultFacilityId }: Props) {
         <input
           name="startTime"
           type="time"
-          defaultValue={v?.startTime}
+          defaultValue={initial.startTime}
           aria-invalid={!!err.startTime}
           className="border rounded px-3 py-2"
         />
@@ -68,7 +89,7 @@ export default function BookingForm({ facilities, defaultFacilityId }: Props) {
           step="0.5"
           min={MIN_HOURS}
           max={MAX_HOURS}
-          defaultValue={v?.durationHours ?? "1"}
+          defaultValue={initial.durationHours}
           aria-invalid={!!err.durationHours}
           className="border rounded px-3 py-2"
         />
@@ -82,9 +103,12 @@ export default function BookingForm({ facilities, defaultFacilityId }: Props) {
         </p>
       )}
 
-      <button disabled={pending} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
-        {pending ? "Booking..." : "Book"}
-      </button>
+      <div className="flex items-center gap-4">
+        <button disabled={pending} className="flex-1 rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+          {isEdit ? (pending ? "Saving..." : "Save changes") : (pending ? "Booking..." : "Book")}
+        </button>
+        {isEdit && <Link href="/mybooking" className="text-zinc-600 hover:underline">Cancel</Link>}
+      </div>
     </form>
   );
 }
