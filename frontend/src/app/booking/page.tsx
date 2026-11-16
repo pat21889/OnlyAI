@@ -23,5 +23,5 @@ export default async function BookingPage({ searchParams }: PageProps<"/booking"
     return <p className="max-w-md mx-auto mt-10 text-zinc-600">No facilities available to book yet.</p>;
   }
 
-  return <BookingForm facilities={facilities} defaultFacilityId={typeof fid === "string" ? fid : undefined} />;
+  return <BookingForm facilities={facilities} defaultFacilityId={facilities.some((f) => f._id === fid) ? (fid as string) : undefined} />;
 }

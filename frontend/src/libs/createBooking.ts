@@ -8,7 +8,7 @@ export default async function createBooking(token: string, input: BookingInput):
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify(input),
   });
-  const json = await res.json();
+  const json = await res.json().catch(() => ({})); // e.g. HTML 502 page from a proxy
   if (!res.ok) throw new Error(json.error || "Failed to create booking");
   return json.data;
 }
