@@ -1,9 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import BookingForm from "./BookingForm";
 import type { Facility } from "@/types/facility";
+import type { Booking } from "@/types/booking";
 
 // The server action pulls in next-auth; rendering checks don't need it.
 jest.mock("@/app/booking/actions", () => ({ saveBooking: jest.fn() }));
+jest.mock("@/app/mybooking/actions", () => ({ editBooking: jest.fn() }));
 
 const base = { location: "Building 1", capacity: 4, createdAt: "", updatedAt: "" };
 const facilities: Facility[] = [
@@ -35,5 +37,42 @@ describe("BookingForm", () => {
   it("starts with no facility selected when fid is missing", () => {
     render(<BookingForm facilities={facilities} />);
     expect(screen.getByRole("combobox", { name: "Facility" })).toHaveValue("");
+  });
+});
+
+describe("BookingForm (edit mode)", () => {
+  const booking: Booking = {
+    _id: "507f1f77bcf86cd7994390aa",
+    facility: { _id: facilities[1]._id, name: "Court B", sportType: "Tennis", location: "Building 1", capacity: 4, hourlyRate: 200 },
+    user: { _id: "u1", name: "Somchai", email: "somchai@example.com", tel: "0811111111", role: "member" },
+    bookingDate: "2026-11-20T00:00:00.000Z",
+    startTime: "18:30",
+    durationHours: 1.5,
+    createdAt: "",
+    updatedAt: "",
+  };
+
+  it("fills the fields from the booking", () => {
+    render(<BookingForm facilities={facilities} booking={booking} />);
+    expect(screen.getByRole("heading", { name: "Edit booking" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Facility" })).toHaveValue(facilities[1]._id);
+    expect(screen.getByLabelText("Date")).toHaveValue("2026-11-20");
+    expect(screen.getByLabelText("Start time")).toHaveValue("18:30");
+    expect(screen.getByRole("spinbutton", { name: /Duration/ })).toHaveValue(1.5);
+    expect(screen.getByText("Booked by Somchai")).toBeInTheDocument();
+  });
+
+  it("shows Save changes and a Cancel link back to My Bookings", () => {
+    render(<BookingForm facilities={facilities} booking={booking} />);
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Cancel" })).toHaveAttribute("href", "/mybooking");
+  });
+
+  it("asks for another facility when the booked one is no longer active", () => {
+    const closed = { ...booking, facility: { ...booking.facility, _id: "507f1f77bcf86cd7994390ff", name: "Old Court" } };
+    render(<BookingForm facilities={facilities} booking={closed} />);
+    // The hint sits inside the <label>, so it becomes part of the select's accessible name.
+    expect(screen.getByRole("combobox", { name: /^Facility/ })).toHaveValue("");
+    expect(screen.getByText(/Old Court is no longer available/)).toBeInTheDocument();
   });
 });
