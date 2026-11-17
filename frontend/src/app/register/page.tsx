@@ -57,7 +57,7 @@ export default function RegisterPage() {
         </select>
       </label>
       {serverError && <p role="alert" className="text-red-600">{serverError}</p>}
-      <button disabled={loading || !hydrated}className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+      <button type="submit" disabled={loading || !hydrated} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
         {loading ? "Creating account..." : "Register"}
       </button>
     </form>

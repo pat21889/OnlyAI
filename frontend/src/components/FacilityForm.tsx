@@ -35,7 +35,7 @@ export default function FacilityForm({ facility }: { facility?: Facility }) {
         {["Badminton", "Tennis", "Futsal", "Basketball", "Gym"].map((s) => <option key={s} value={s} />)}
       </datalist>
       {state.message && <p role="alert" className="text-red-600">{state.message}</p>}
-      <button disabled={pending} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+      <button type="submit" disabled={pending} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
         {pending ? "Saving..." : "Save"}
       </button>
     </form>

@@ -104,7 +104,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
       )}
 
       <div className="flex items-center gap-4">
-        <button disabled={pending} className="flex-1 rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+        <button type="submit" disabled={pending} className="flex-1 rounded bg-blue-600 py-2 text-white disabled:opacity-50">
           {isEdit ? (pending ? "Saving..." : "Save changes") : (pending ? "Booking..." : "Book")}
         </button>
         {isEdit && <Link href="/mybooking" className="text-zinc-600 hover:underline">Cancel</Link>}

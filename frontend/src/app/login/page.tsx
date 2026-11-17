@@ -40,7 +40,7 @@ function LoginForm() {
         <input name="password" type="password" required className="border rounded px-3 py-2" />
       </label>
       {error && <p role="alert" className="text-red-600">{error}</p>}
-      <button disabled={loading || !hydrated}className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+      <button type="submit" disabled={loading || !hydrated} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
         {loading ? "Logging in..." : "Login"}
       </button>
       <p className="text-sm">No account? <Link href="/register" className="text-blue-600">Register</Link></p>
