@@ -15,7 +15,7 @@ export default function FacilityForm({ facility }: { facility?: Facility }) {
   const [state, action, pending] = useActionState(saveFacility.bind(null, facility?._id), {});
 
   return (
-    <form action={action} noValidate className="max-w-md mx-auto mt-10 flex flex-col gap-4 bg-white p-8 rounded shadow">
+    <form action={action} noValidate className="max-w-md mx-auto mt-10 flex flex-col gap-4 bg-white p-8 rounded-xl border border-[#E8D9D6]">
       <h1 className="text-2xl font-semibold">{facility ? "Edit facility" : "Add facility"}</h1>
       {fields.map((f) => (
         <label key={f.name} className="flex flex-col gap-1">{f.label}
@@ -26,7 +26,7 @@ export default function FacilityForm({ facility }: { facility?: Facility }) {
             step={f.name === "hourlyRate" ? "any" : undefined}
             defaultValue={state.values?.[f.name] ?? facility?.[f.name]}
             aria-invalid={!!state.errors?.[f.name]}
-            className="border rounded px-3 py-2"
+            className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
           />
           {state.errors?.[f.name] && <span className="text-sm text-red-600">{state.errors[f.name]}</span>}
         </label>
@@ -35,7 +35,7 @@ export default function FacilityForm({ facility }: { facility?: Facility }) {
         {["Badminton", "Tennis", "Futsal", "Basketball", "Gym"].map((s) => <option key={s} value={s} />)}
       </datalist>
       {state.message && <p role="alert" className="text-red-600">{state.message}</p>}
-      <button type="submit" disabled={pending} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+      <button type="submit" disabled={pending} className="rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
         {pending ? "Saving..." : "Save"}
       </button>
     </form>

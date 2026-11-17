@@ -31,16 +31,16 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} method="post" className="max-w-sm mx-auto mt-16 flex flex-col gap-4 bg-white p-8 rounded shadow">
+    <form onSubmit={onSubmit} method="post" className="max-w-sm mx-auto mt-16 flex flex-col gap-4 bg-white p-8 rounded-xl border border-[#E8D9D6]">
       <h1 className="text-2xl font-semibold">Login</h1>
       <label className="flex flex-col gap-1">Email
-        <input name="email" type="email" required className="border rounded px-3 py-2" />
+        <input name="email" type="email" required className="border border-[#CDB9B5] rounded-lg px-3 py-2.5" />
       </label>
       <label className="flex flex-col gap-1">Password
-        <input name="password" type="password" required className="border rounded px-3 py-2" />
+        <input name="password" type="password" required className="border border-[#CDB9B5] rounded-lg px-3 py-2.5" />
       </label>
       {error && <p role="alert" className="text-red-600">{error}</p>}
-      <button type="submit" disabled={loading || !hydrated} className="rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+      <button type="submit" disabled={loading || !hydrated} className="rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
         {loading ? "Logging in..." : "Login"}
       </button>
       <p className="text-sm">No account? <Link href="/register" className="text-blue-600">Register</Link></p>
