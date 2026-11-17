@@ -116,7 +116,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
           ? "Choose a facility to see the price"
           : price === null
             ? `Enter a duration of ${MIN_HOURS}–${MAX_HOURS} hours to see the price`
-            : <>Total: <strong className="text-base text-zinc-900">{formatPrice(price)} THB</strong> ({formatPrice(rate)} THB/hour × {hours} hr)</>}
+            : <>Total: <strong className="text-base text-zinc-900">{formatPrice(price)} THB</strong></>}
       </p>
 
       {state.message && <p role="alert" className="text-red-600">{state.message}</p>}

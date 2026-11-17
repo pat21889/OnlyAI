@@ -45,13 +45,13 @@ describe("BookingForm", () => {
 
   it("shows the total price and updates it when facility or duration changes", () => {
     render(<BookingForm facilities={facilities} defaultFacilityId={facilities[0]._id} />);
-    expect(screen.getByTestId("total-price")).toHaveTextContent("Total: 150 THB (150 THB/hour × 1 hr)");
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 150 THB$/);
 
     fireEvent.change(screen.getByRole("spinbutton", { name: /Duration/ }), { target: { value: "1.5" } });
-    expect(screen.getByTestId("total-price")).toHaveTextContent("Total: 225 THB (150 THB/hour × 1.5 hr)");
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 225 THB$/);
 
     fireEvent.change(screen.getByRole("combobox", { name: "Facility" }), { target: { value: facilities[1]._id } });
-    expect(screen.getByTestId("total-price")).toHaveTextContent("Total: 300 THB (200 THB/hour × 1.5 hr)");
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 300 THB$/);
   });
 
   it("hides the total when the duration is invalid", () => {
@@ -81,7 +81,7 @@ describe("BookingForm (edit mode)", () => {
     expect(screen.getByLabelText("Start time")).toHaveValue("18:30");
     expect(screen.getByRole("spinbutton", { name: /Duration/ })).toHaveValue(1.5);
     expect(screen.getByText("Booked by Somchai")).toBeInTheDocument();
-    expect(screen.getByTestId("total-price")).toHaveTextContent("Total: 300 THB (200 THB/hour × 1.5 hr)");
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 300 THB$/);
   });
 
   it("shows Save changes and a Cancel link back to My Bookings", () => {
