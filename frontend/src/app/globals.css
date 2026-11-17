@@ -1,6 +1,29 @@
 @import "tailwindcss";
 
+/* Brand red #850909. Remapping blue-* and zinc-50 re-themes every existing utility class at once. */
+@theme {
+  --color-blue-50: #f6e7e5;
+  --color-blue-600: #850909;
+  --color-blue-700: #6b0707;
+  --color-zinc-50: #fbf7f5;
+  --color-zinc-600: #6b5a5c;
+  --color-zinc-500: #6b5a5c;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-space), system-ui, sans-serif;
+}
+
 body {
-  color: #171717;
-  font-family: Arial, Helvetica, sans-serif;
+  color: #1f1214;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+input, select {
+  background: #fff;
+}
+
+a, button {
+  cursor: pointer;
 }

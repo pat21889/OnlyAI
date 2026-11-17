@@ -11,7 +11,7 @@ export default async function BookingPage({ searchParams }: PageProps<"/booking"
   // Backend only lets members create bookings.
   if (session?.user.role === "admin") {
     return (
-      <div className="max-w-md mx-auto mt-10 rounded bg-white p-8 shadow">
+      <div className="max-w-md mx-auto mt-10 rounded-xl border border-[#E8D9D6] bg-white p-8">
         <h1 className="text-2xl font-semibold mb-2">Book a facility</h1>
         <p data-testid="admin-no-booking">Admins cannot create bookings. You can manage existing bookings in My Bookings.</p>
         <Link href="/mybooking" className="mt-4 inline-block text-blue-600 hover:underline">Go to My Bookings</Link>

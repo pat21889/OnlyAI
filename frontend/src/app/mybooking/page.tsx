@@ -19,7 +19,7 @@ export default async function MyBookingPage() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">{isAdmin ? "All Bookings" : "My Bookings"}</h1>
         {!isAdmin && (
-          <Link href="/booking" className="rounded bg-blue-600 px-4 py-2 text-white">+ New booking</Link>
+          <Link href="/booking" className="rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white hover:bg-blue-700">+ New booking</Link>
         )}
       </div>
       <ReduxProvider>

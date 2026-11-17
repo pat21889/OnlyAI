@@ -17,17 +17,17 @@ export default async function FacilityPage({ searchParams }: PageProps<"/facilit
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Facilities</h1>
         {isAdmin && (
-          <Link href="/admin/facility/new" className="rounded bg-blue-600 px-4 py-2 text-white">+ Add facility</Link>
+          <Link href="/admin/facility/new" className="rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white hover:bg-blue-700">+ Add facility</Link>
         )}
       </div>
       <form method="get" className="mb-6 flex flex-wrap gap-3" data-testid="facility-filter">
-        <input name="q" defaultValue={q} placeholder="Search name or location" aria-label="Search" className="flex-1 min-w-48 rounded border px-3 py-2" />
-        <select name="sport" defaultValue={sport} aria-label="Sport type" className="rounded border px-3 py-2">
+        <input name="q" defaultValue={q} placeholder="Search name or location" aria-label="Search" className="flex-1 min-w-48 rounded-lg border border-[#CDB9B5] px-3 py-2.5" />
+        <select name="sport" defaultValue={sport} aria-label="Sport type" className="rounded-lg border border-[#CDB9B5] px-3 py-2.5">
           <option value="">All sports</option>
           {sportTypes.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
-        <input name="maxPrice" type="number" min="0" defaultValue={maxPrice} placeholder="Max price/hr" aria-label="Max price per hour" className="w-36 rounded border px-3 py-2" />
-        <button type="submit" className="rounded bg-blue-600 px-4 py-2 text-white">Filter</button>
+        <input name="maxPrice" type="number" min="0" defaultValue={maxPrice} placeholder="Max price/hr" aria-label="Max price per hour" className="w-36 rounded-lg border border-[#CDB9B5] px-3 py-2.5" />
+        <button type="submit" className="rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white hover:bg-blue-700">Filter</button>
         <Link href="/facility" className="px-2 py-2 text-blue-600 hover:underline">Clear</Link>
       </form>
       {facilities.length === 0 ? (

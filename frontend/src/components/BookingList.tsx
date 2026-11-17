@@ -27,9 +27,9 @@ export default function BookingList({ initialBookings, isAdmin }: Props) {
   }
 
   return (
-    <div className="overflow-x-auto rounded bg-white shadow">
+    <div className="overflow-x-auto rounded-xl border border-[#E8D9D6] bg-white">
       <table className="w-full text-left text-sm">
-        <thead className="border-b bg-zinc-100 text-zinc-700">
+        <thead className="border-b bg-blue-50 text-blue-600">
           <tr>
             <th className="px-4 py-3">Facility</th>
             {isAdmin && <th className="px-4 py-3">User</th>}

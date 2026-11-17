@@ -46,7 +46,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
       key={JSON.stringify(state)}
       action={action}
       noValidate
-      className="max-w-md mx-auto mt-10 flex flex-col gap-4 bg-white p-8 rounded shadow"
+      className="max-w-md mx-auto mt-10 flex flex-col gap-4 bg-white p-8 rounded-xl border border-[#E8D9D6]"
     >
       <h1 className="text-2xl font-semibold">{isEdit ? "Edit booking" : "Book a facility"}</h1>
       {isEdit && booking.user && <p className="text-sm text-zinc-600">Booked by {booking.user.name}</p>}
@@ -57,7 +57,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
           defaultValue={initialFacility}
           onChange={(e) => setPicked((p) => ({ ...p, facility: e.target.value }))}
           aria-invalid={!!err.facility}
-          className="border rounded px-3 py-2"
+          className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
         >
           <option value="" disabled>Choose a facility</option>
           {facilities.map((f) => (
@@ -80,7 +80,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
           suppressHydrationWarning // server and browser may be in different time zones
           defaultValue={initial.bookingDate}
           aria-invalid={!!err.bookingDate}
-          className="border rounded px-3 py-2"
+          className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
         />
         {err.bookingDate && <span className="text-sm text-red-600">{err.bookingDate}</span>}
       </label>
@@ -91,7 +91,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
           type="time"
           defaultValue={initial.startTime}
           aria-invalid={!!err.startTime}
-          className="border rounded px-3 py-2"
+          className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
         />
         {err.startTime && <span className="text-sm text-red-600">{err.startTime}</span>}
       </label>
@@ -106,7 +106,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
           defaultValue={initial.durationHours}
           onChange={(e) => setPicked((p) => ({ ...p, duration: e.target.value }))}
           aria-invalid={!!err.durationHours}
-          className="border rounded px-3 py-2"
+          className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
         />
         {err.durationHours && <span className="text-sm text-red-600">{err.durationHours}</span>}
       </label>
@@ -127,7 +127,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
       )}
 
       <div className="flex items-center gap-4">
-        <button type="submit" disabled={pending} className="flex-1 rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+        <button type="submit" disabled={pending} className="flex-1 rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
           {isEdit ? (pending ? "Saving..." : "Save changes") : (pending ? "Booking..." : "Book")}
         </button>
         {isEdit && <Link href="/mybooking" className="text-zinc-600 hover:underline">Cancel</Link>}
