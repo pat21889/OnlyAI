@@ -1,0 +1,20 @@
+# Local test stack: API + throwaway MongoDB. Other settings come from config/config.env.
+services:
+  mongo:
+    image: mongo:8
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build: .
+    env_file: config/config.env
+    ports:
+      - "5000:5000"
+    environment:
+      # `environment` beats env_file, so this replaces the Atlas URI from config.env
+      MONGO_URI: mongodb://mongo:27017/sport-facility-booking
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
