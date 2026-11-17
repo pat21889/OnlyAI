@@ -51,7 +51,9 @@ describe("BookingList", () => {
     expect(within(rows[0]).getByText("2026-11-20")).toBeInTheDocument();
     expect(within(rows[0]).getByText("18:00–19:30")).toBeInTheDocument();
     expect(within(rows[0]).getByText("1.5 hr")).toBeInTheDocument();
+    expect(within(rows[0]).getByText("300 THB")).toBeInTheDocument();
     expect(within(rows[1]).getByText("07:00–09:00")).toBeInTheDocument();
+    expect(within(rows[1]).getByText("800 THB")).toBeInTheDocument();
   });
 
   it("has Edit and Delete on every row", () => {

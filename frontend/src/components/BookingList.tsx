@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { setBookings } from "@/redux/features/bookingSlice";
-import { bookingDay, endTime } from "@/libs/bookingTime";
+import { bookingDay, endTime, formatPrice } from "@/libs/bookingTime";
 import DeleteBookingButton from "./DeleteBookingButton";
 import type { Booking } from "@/types/booking";
 
@@ -36,6 +36,7 @@ export default function BookingList({ initialBookings, isAdmin }: Props) {
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3">Time</th>
             <th className="px-4 py-3">Duration</th>
+            <th className="px-4 py-3">Price</th>
             <th className="px-4 py-3"><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
@@ -55,6 +56,7 @@ export default function BookingList({ initialBookings, isAdmin }: Props) {
               <td className="px-4 py-3">{bookingDay(b.bookingDate)}</td>
               <td className="px-4 py-3">{b.startTime}–{endTime(b.startTime, b.durationHours)}</td>
               <td className="px-4 py-3">{b.durationHours} hr</td>
+              <td className="px-4 py-3">{b.facility ? `${formatPrice(b.facility.hourlyRate * b.durationHours)} THB` : "–"}</td>
               <td className="px-4 py-3 text-right whitespace-nowrap">
                 <Link href={`/mybooking/${b._id}/edit`} className="mr-4 text-blue-600 hover:underline">Edit</Link>
                 <DeleteBookingButton
