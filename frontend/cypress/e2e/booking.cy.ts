@@ -52,6 +52,11 @@ describe("Create booking", () => {
     cy.location("search").should("eq", `?fid=${facilityId}`);
     cy.get("select[name=facility]:visible").should("have.value", facilityId);
 
+    // total price = hourlyRate (150) × duration, updated before submitting
+    cy.get("[data-testid=total-price]:visible").should("contain", "150 THB");
+    cy.get("input[name=durationHours]:visible").clear().type("1.5");
+    cy.get("[data-testid=total-price]:visible").should("contain", "225 THB");
+
     fillBooking({ date: dateIn(3), time: "10:00", hours: "1.5" });
     cy.get("[data-testid=booking-success]:visible")
       .should("contain", facilityName)
