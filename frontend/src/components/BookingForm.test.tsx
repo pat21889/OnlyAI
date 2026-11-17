@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import BookingForm from "./BookingForm";
 import type { Facility } from "@/types/facility";
 import type { Booking } from "@/types/booking";
@@ -38,6 +38,27 @@ describe("BookingForm", () => {
     render(<BookingForm facilities={facilities} />);
     expect(screen.getByRole("combobox", { name: "Facility" })).toHaveValue("");
   });
+  it("shows no price until a facility is chosen", () => {
+    render(<BookingForm facilities={facilities} />);
+    expect(screen.getByTestId("total-price")).toHaveTextContent("Choose a facility to see the price");
+  });
+
+  it("shows the total price and updates it when facility or duration changes", () => {
+    render(<BookingForm facilities={facilities} defaultFacilityId={facilities[0]._id} />);
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 150 THB$/);
+
+    fireEvent.change(screen.getByRole("spinbutton", { name: /Duration/ }), { target: { value: "1.5" } });
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 225 THB$/);
+
+    fireEvent.change(screen.getByRole("combobox", { name: "Facility" }), { target: { value: facilities[1]._id } });
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 300 THB$/);
+  });
+
+  it("hides the total when the duration is invalid", () => {
+    render(<BookingForm facilities={facilities} defaultFacilityId={facilities[0]._id} />);
+    fireEvent.change(screen.getByRole("spinbutton", { name: /Duration/ }), { target: { value: "3" } });
+    expect(screen.getByTestId("total-price")).toHaveTextContent("Enter a duration of 0.5–2 hours to see the price");
+  });
 });
 
 describe("BookingForm (edit mode)", () => {
@@ -60,6 +81,7 @@ describe("BookingForm (edit mode)", () => {
     expect(screen.getByLabelText("Start time")).toHaveValue("18:30");
     expect(screen.getByRole("spinbutton", { name: /Duration/ })).toHaveValue(1.5);
     expect(screen.getByText("Booked by Somchai")).toBeInTheDocument();
+    expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 300 THB$/);
   });
 
   it("shows Save changes and a Cancel link back to My Bookings", () => {

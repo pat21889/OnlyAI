@@ -1,10 +1,10 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { saveBooking } from "@/app/booking/actions";
 import { editBooking } from "@/app/mybooking/actions";
 import { MAX_HOURS, MIN_HOURS, todayString } from "@/libs/parseBookingForm";
-import { bookingDay } from "@/libs/bookingTime";
+import { bookingDay, formatPrice, totalPrice } from "@/libs/bookingTime";
 import type { Booking } from "@/types/booking";
 import type { Facility } from "@/types/facility";
 
@@ -26,6 +26,19 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
   };
   // The facility list only has active facilities; a booking may point at one that was closed since.
   const facilityGone = isEdit && !facilities.some((f) => f._id === booking.facility?._id);
+  const initialFacility = facilityGone && !v ? "" : initial.facility;
+
+  // Facility and duration are tracked only to show the price; the inputs stay uncontrolled.
+  // Reset them whenever the action returns, because the form remounts with new defaults.
+  const [picked, setPicked] = useState({ facility: initialFacility, duration: initial.durationHours });
+  const [seenState, setSeenState] = useState(state);
+  if (seenState !== state) {
+    setSeenState(state);
+    setPicked({ facility: initialFacility, duration: initial.durationHours });
+  }
+  const rate = facilities.find((f) => f._id === picked.facility)?.hourlyRate;
+  const hours = Number(picked.duration);
+  const price = totalPrice(rate, hours);
 
   return (
     // key: remount after each submit so defaultValues reflect what the action echoed back
@@ -41,7 +54,8 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
       <label className="flex flex-col gap-1">Facility
         <select
           name="facility"
-          defaultValue={facilityGone && !v ? "" : initial.facility}
+          defaultValue={initialFacility}
+          onChange={(e) => setPicked((p) => ({ ...p, facility: e.target.value }))}
           aria-invalid={!!err.facility}
           className="border rounded px-3 py-2"
         >
@@ -90,11 +104,20 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
           min={MIN_HOURS}
           max={MAX_HOURS}
           defaultValue={initial.durationHours}
+          onChange={(e) => setPicked((p) => ({ ...p, duration: e.target.value }))}
           aria-invalid={!!err.durationHours}
           className="border rounded px-3 py-2"
         />
         {err.durationHours && <span className="text-sm text-red-600">{err.durationHours}</span>}
       </label>
+
+      <p data-testid="total-price" aria-live="polite" className="rounded bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
+        {rate === undefined
+          ? "Choose a facility to see the price"
+          : price === null
+            ? `Enter a duration of ${MIN_HOURS}–${MAX_HOURS} hours to see the price`
+            : <>Total: <strong className="text-base text-zinc-900">{formatPrice(price)} THB</strong></>}
+      </p>
 
       {state.message && <p role="alert" className="text-red-600">{state.message}</p>}
       {state.success && (
@@ -104,7 +127,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
       )}
 
       <div className="flex items-center gap-4">
-        <button disabled={pending} className="flex-1 rounded bg-blue-600 py-2 text-white disabled:opacity-50">
+        <button type="submit" disabled={pending} className="flex-1 rounded bg-blue-600 py-2 text-white disabled:opacity-50">
           {isEdit ? (pending ? "Saving..." : "Save changes") : (pending ? "Booking..." : "Book")}
         </button>
         {isEdit && <Link href="/mybooking" className="text-zinc-600 hover:underline">Cancel</Link>}

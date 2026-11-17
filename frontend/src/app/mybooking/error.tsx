@@ -5,7 +5,7 @@ export default function MyBookingError({ retry }: { error: Error; retry: () => v
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
       <p role="alert" className="text-red-600 mb-4">Couldn&apos;t load your bookings. Is the backend running?</p>
-      <button onClick={() => retry()} className="rounded border px-4 py-2">Try again</button>
+      <button type="button" onClick={() => retry()} className="rounded border px-4 py-2">Try again</button>
     </div>
   );
 }
