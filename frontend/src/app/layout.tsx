@@ -23,7 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <TopMenu />
           </Suspense>
           <main className="flex-1">{children}</main>
-          <Suspense fallback={<footer className="mt-16 h-48 bg-[#1f1214]" />}>
+          <Suspense fallback={<footer className="mt-16 h-48 bg-blue-600" />}>
             <Footer />
           </Suspense>
         </NextAuthProvider>

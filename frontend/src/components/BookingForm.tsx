@@ -1,12 +1,58 @@
 "use client";
-import { useActionState, useState } from "react";
+import { useActionState, useId, useState } from "react";
 import Link from "next/link";
 import { saveBooking } from "@/app/booking/actions";
 import { editBooking } from "@/app/mybooking/actions";
-import { MAX_HOURS, MIN_HOURS, todayString } from "@/libs/parseBookingForm";
+import DatePicker from "@/components/DatePicker";
+import TimePicker from "@/components/TimePicker";
+import useHydrated from "@/libs/useHydrated";
+import { MAX_HOURS, MIN_HOURS, todayString, type BookingErrors } from "@/libs/parseBookingForm";
 import { bookingDay, formatPrice, totalPrice } from "@/libs/bookingTime";
 import type { Booking } from "@/types/booking";
 import type { Facility } from "@/types/facility";
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+// Date and start time share state: slots that already passed today are disabled.
+// Rendered inside the form, so it remounts (and resets) with the form after each submit.
+function WhenFields({ date: initialDate, time: initialTime, err }: { date?: string; time?: string; err: BookingErrors }) {
+  const hydrated = useHydrated(); // "now" only exists in the browser, so server and client HTML match
+  const dateLabel = useId();
+  const timeLabel = useId();
+  const [date, setDate] = useState(initialDate ?? "");
+  const [time, setTime] = useState(initialTime ?? "");
+  const today = todayString();
+  const now = hydrated ? new Date() : null;
+  const nowTime = now ? `${pad(now.getHours())}:${pad(now.getMinutes())}` : "";
+  const passed = (slot: string) => date === today && slot < nowTime;
+
+  return (
+    <>
+      <div className="flex flex-col gap-1">
+        <span id={dateLabel}>Date</span>
+        <DatePicker
+          name="bookingDate"
+          labelledBy={dateLabel}
+          value={date}
+          min={today}
+          invalid={!!err.bookingDate}
+          onChange={(d) => {
+            setDate(d);
+            if (d === today && time < nowTime) setTime("");
+          }}
+        />
+        {err.bookingDate && <span className="text-sm text-red-600">{err.bookingDate}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <span id={timeLabel}>Start time</span>
+        <TimePicker name="startTime" labelledBy={timeLabel} value={time} invalid={!!err.startTime} isDisabled={passed} onChange={setTime} />
+        <span className="text-sm font-normal text-zinc-600">Times already passed today are disabled.</span>
+        {err.startTime && <span className="text-sm text-red-600">{err.startTime}</span>}
+      </div>
+    </>
+  );
+}
 
 // booking undefined → create (member only), otherwise edit that booking (owner or admin).
 type Props = { facilities: Facility[]; defaultFacilityId?: string; booking?: Booking };
@@ -72,29 +118,7 @@ export default function BookingForm({ facilities, defaultFacilityId, booking }: 
         {err.facility && <span className="text-sm text-red-600">{err.facility}</span>}
       </label>
 
-      <label className="flex flex-col gap-1">Date
-        <input
-          name="bookingDate"
-          type="date"
-          min={todayString()}
-          suppressHydrationWarning // server and browser may be in different time zones
-          defaultValue={initial.bookingDate}
-          aria-invalid={!!err.bookingDate}
-          className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
-        />
-        {err.bookingDate && <span className="text-sm text-red-600">{err.bookingDate}</span>}
-      </label>
-
-      <label className="flex flex-col gap-1">Start time
-        <input
-          name="startTime"
-          type="time"
-          defaultValue={initial.startTime}
-          aria-invalid={!!err.startTime}
-          className="border border-[#CDB9B5] rounded-lg px-3 py-2.5"
-        />
-        {err.startTime && <span className="text-sm text-red-600">{err.startTime}</span>}
-      </label>
+      <WhenFields date={initial.bookingDate} time={initial.startTime} err={err} />
 
       <label className="flex flex-col gap-1">Duration (hours, {MIN_HOURS}–{MAX_HOURS})
         <input
