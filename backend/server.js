@@ -139,7 +139,8 @@ dotenv.config({ path: path.join(__dirname, "config/config.env") });
 if (process.env.MONGO_URI) {
   connectDB().catch((error) => {
     console.error(`Database connection failed: ${error.message}`);
-    process.exit(1);
+    // On Vercel, exiting kills the function before it can send any (CORS-headed) response.
+    if (!process.env.VERCEL) process.exit(1);
   });
 }
 
@@ -161,9 +162,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_URL
-    : "http://localhost:3000",
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
   credentials: true,
 }));
 
