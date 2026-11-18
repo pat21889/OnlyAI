@@ -167,7 +167,7 @@ app.use(cors({
 }));
 
 if (process.env.MONGO_URI) {
-  app.use((req, res, next) => connectDB().then(() => next(), next));
+  app.use("/api", (req, res, next) => connectDB().then(() => next(), next));
 }
 
 app.use("/api/v1/auth", auth);
