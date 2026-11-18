@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import useHydrated from "@/libs/useHydrated";
+import PasswordField from "@/components/PasswordField";
 
 function LoginForm() {
   const hydrated = useHydrated();
@@ -36,9 +37,7 @@ function LoginForm() {
       <label className="flex flex-col gap-1">Email
         <input name="email" type="email" required className="border border-[#CDB9B5] rounded-lg px-3 py-2.5" />
       </label>
-      <label className="flex flex-col gap-1">Password
-        <input name="password" type="password" required className="border border-[#CDB9B5] rounded-lg px-3 py-2.5" />
-      </label>
+      <PasswordField required />
       {error && <p role="alert" className="text-red-600">{error}</p>}
       <button type="submit" disabled={loading || !hydrated} className="rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
         {loading ? "Logging in..." : "Login"}

@@ -11,7 +11,12 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please add a valid email"],
   },
-  tel: { type: String, required: [true, "Please add a telephone number"] },
+  tel: {
+    type: String,
+    required: [true, "Please add a telephone number"],
+    // Length only: Thai landlines have 9 digits, mobiles 10.
+    match: [/^\d{9,10}$/, "Telephone number must be 9 or 10 digits"],
+  },
   role: { type: String, enum: ["member", "admin"], default: "member" },
   password: { type: String, required: [true, "Please add a password"], minLength: 6, select: false },
   createdAt: { type: Date, default: Date.now },

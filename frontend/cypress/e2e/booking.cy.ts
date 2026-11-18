@@ -1,4 +1,6 @@
 // Needs the frontend AND backend (with a database) running.
+import pickDate from "../support/pickDate";
+import pickTime from "../support/pickTime";
 // Backend URL for test setup: CYPRESS_BACKEND_URL (default http://localhost:5000).
 const backend = Cypress.env("BACKEND_URL") || "http://localhost:5000";
 const stamp = Date.now();
@@ -24,8 +26,8 @@ function login(user: { email: string; password: string; name: string }) {
 }
 
 function fillBooking({ date, time, hours }: { date: string; time: string; hours: string }) {
-  cy.get("input[name=bookingDate]:visible").clear().type(date);
-  cy.get("input[name=startTime]:visible").clear().type(time);
+  pickDate(date);
+  pickTime(time);
   cy.get("input[name=durationHours]:visible").clear().type(hours);
   cy.contains("button:visible", "Book").click();
 }

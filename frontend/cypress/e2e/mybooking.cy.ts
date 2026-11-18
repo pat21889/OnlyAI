@@ -1,4 +1,6 @@
 // Issue #6: My bookings — view / edit / delete (member + admin).
+import pickDate from "../support/pickDate";
+import pickTime from "../support/pickTime";
 // Needs the frontend AND backend (with a database) running. Creates its own users,
 // facility and bookings through the API, so existing data is left alone.
 // Backend URL for test setup: CYPRESS_BACKEND_URL (default http://localhost:5000).
@@ -75,9 +77,9 @@ describe("My bookings", () => {
     rows("10:00–11:00").contains("a", "Edit").click();
     cy.contains("h1", "Edit booking");
     cy.get("select[name=facility]:visible").should("have.value", facilityId);
-    cy.get("input[name=startTime]:visible").should("have.value", "10:00");
-    cy.get("input[name=bookingDate]:visible").clear().type(dateIn(4));
-    cy.get("input[name=startTime]:visible").clear().type("14:00");
+    cy.get("input[name=startTime]").should("have.value", "10:00");
+    pickDate(dateIn(4));
+    pickTime("14:00");
     cy.get("input[name=durationHours]:visible").clear().type("2");
     cy.contains("button:visible", "Save changes").click();
 
@@ -102,7 +104,7 @@ describe("My bookings", () => {
     login(memberA);
     cy.visit("/mybooking");
     rows("09:00–10:00").contains("a", "Edit").click();
-    cy.get("input[name=startTime]:visible").clear().type("11:30");
+    pickTime("11:30");
     cy.contains("button:visible", "Save changes").click();
     cy.get("[role=alert]:visible").should("contain", "overlapping booking");
     cy.location("pathname").should("match", /\/edit$/);

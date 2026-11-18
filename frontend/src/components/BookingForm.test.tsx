@@ -17,8 +17,8 @@ describe("BookingForm", () => {
   it("renders facility, date, time and duration fields", () => {
     render(<BookingForm facilities={facilities} />);
     expect(screen.getByRole("combobox", { name: "Facility" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Date")).toHaveAttribute("type", "date");
-    expect(screen.getByLabelText("Start time")).toHaveAttribute("type", "time");
+    expect(screen.getByRole("button", { name: /^Date/ })).toHaveTextContent("Choose a date");
+    expect(screen.getByRole("button", { name: /^Start time/ })).toHaveTextContent("Select time");
     expect(screen.getByRole("spinbutton", { name: /Duration/ })).toHaveValue(1);
     expect(screen.getByRole("button", { name: "Book" })).toBeInTheDocument();
   });
@@ -77,8 +77,10 @@ describe("BookingForm (edit mode)", () => {
     render(<BookingForm facilities={facilities} booking={booking} />);
     expect(screen.getByRole("heading", { name: "Edit booking" })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Facility" })).toHaveValue(facilities[1]._id);
-    expect(screen.getByLabelText("Date")).toHaveValue("2026-11-20");
-    expect(screen.getByLabelText("Start time")).toHaveValue("18:30");
+    expect(document.querySelector("input[name=bookingDate]")).toHaveValue("2026-11-20");
+    expect(screen.getByRole("button", { name: /^Date/ })).toHaveTextContent("Fri, 20 Nov 2026");
+    expect(document.querySelector("input[name=startTime]")).toHaveValue("18:30");
+    expect(screen.getByRole("button", { name: /^Start time/ })).toHaveTextContent("18:30");
     expect(screen.getByRole("spinbutton", { name: /Duration/ })).toHaveValue(1.5);
     expect(screen.getByText("Booked by Somchai")).toBeInTheDocument();
     expect(screen.getByTestId("total-price")).toHaveTextContent(/^Total: 300 THB$/);
