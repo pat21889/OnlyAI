@@ -166,6 +166,10 @@ app.use(cors({
   credentials: true,
 }));
 
+if (process.env.MONGO_URI) {
+  app.use((req, res, next) => connectDB().then(() => next(), next));
+}
+
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/facilities", facilities);
 app.use("/api/v1/bookings", bookings);
