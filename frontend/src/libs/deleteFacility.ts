@@ -3,5 +3,8 @@ export default async function deleteFacility(token: string, id: string): Promise
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error((await res.json()).error || "Failed to delete facility");
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({})); // e.g. empty or HTML reply from a proxy
+    throw new Error(json.error || `Failed to delete facility (server replied ${res.status})`);
+  }
 }

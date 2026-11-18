@@ -12,7 +12,7 @@ export default async function userRegister(input: RegisterInput) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || "Registration failed");
+  const json = await res.json().catch(() => ({})); // e.g. empty or HTML reply from a proxy
+  if (!res.ok) throw new Error(json.error || `Registration failed (server replied ${res.status})`);
   return json.data;
 }
